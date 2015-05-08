@@ -20,6 +20,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:22.0.0'
+    compile files('D:/AndroidLocal/Destranger/.idea/libraries/android-support-v4.jar')
+    compile files('D:/AndroidLocal/Destranger/.idea/libraries/mid-sdk-2.10.jar')
+    compile files('D:/AndroidLocal/Destranger/.idea/libraries/mta-sdk-2.0.2.jar')
+    compile files('D:/AndroidLocal/Destranger/.idea/libraries/Xg_sdk_v2.37.jar')
+    compile files('D:/AndroidLocal/Destranger/.idea/libraries/wup-1.0.0-SNAPSHOT.jar')
 }
