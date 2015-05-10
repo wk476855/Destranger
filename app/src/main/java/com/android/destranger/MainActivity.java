@@ -1,10 +1,22 @@
 package com.android.destranger;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -14,7 +26,54 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.v("", "");
+        Intent intent = new Intent(this, SocketService.class);
+        startService(intent);
+
+    }
+
+
+    public void send(View view) {
+        new Thread() {
+            @Override
+            public void run() {
+                Socket socket = null;
+                OutputStream out =null;
+                BufferedOutputStream bos = null;
+                try {
+                    socket = new Socket("192.168.1.160", 12345);
+                    out = socket.getOutputStream();
+                    bos = new BufferedOutputStream(out);
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put("msg", "sdfs");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    bos.write(json.toString().getBytes());
+                    bos.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }finally {
+                    try {
+                        if(out != null)
+                            out.close();
+                        if(bos != null)
+                            bos.close();
+                        if(bos != null)
+                            socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
+
+
+    @Override
+    protected void onPause() {
+//        XGPushManager.unregisterPush(getApplicationContext());
+        super.onPause();
     }
 
     @Override
