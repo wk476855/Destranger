@@ -1,46 +1,45 @@
 package com.android.destranger.com.android.destranger.push;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 /**
  * Created by wk on 2015/5/10.
  */
-public class AsynSendTask extends AsyncTask<Void, Message, Void>{
-    @Override
-    protected Void doInBackground(Void... params) {
-        while (true) {
-            if(!MessageQueue.isEmpty()) {
-                Message msg = MessageQueue.poll();
-                if(msg != null) {
+public class AsynSendTask extends AsyncTask<ClientSocket, String, Void>{
 
+    Context context = null;
+
+    public AsynSendTask(Context context) {
+        super();
+        this.context = context;
+    }
+
+    @Override
+    protected Void doInBackground(ClientSocket... params) {
+        ClientSocket client = params[0];
+        while (true) {
+            if(client == null)  continue;
+            if(!MessageQueue.Wait_Queue.isEmpty()) {
+                Message msg = MessageQueue.Wait_Queue.poll();
+                if(msg != null) {
+                    MessageQueue.Send_Queue.push(msg);
+                    try {
+                        client.send(msg);
+                    } catch (IOException e) {
+                        onProgressUpdate(e.getMessage());
+                    }
                 }
             }
         }
-        return null;
     }
 
     @Override
-    protected void onCancelled() {
-        super.onCancelled();
-    }
-
-    @Override
-    protected void onCancelled(Void aVoid) {
-        super.onCancelled(aVoid);
-    }
-
-    @Override
-    protected void onProgressUpdate(Message... values) {
+    protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
+        Toast.makeText(context, values[0], Toast.LENGTH_SHORT).show();
     }
 }

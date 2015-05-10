@@ -7,23 +7,27 @@ import java.util.PriorityQueue;
  */
 public class MessageQueue {
 
-    private static PriorityQueue<Message> queue = new PriorityQueue<Message>();
-    private MessageQueue(){
+    private PriorityQueue<Message> queue;
+    public final static MessageQueue Wait_Queue = new MessageQueue();
+    public final static MessageQueue Send_Queue = new MessageQueue();
+
+    private  MessageQueue(){
+        queue = new PriorityQueue<Message>();
     }
 
-    public synchronized static boolean push(Message msg) {
+    public synchronized boolean push(Message msg) {
         return queue.add(msg);
     }
 
-    public synchronized static Message peek() {
+    public synchronized Message peek() {
         return queue.peek();
     }
 
-    public synchronized static Message poll() {
+    public synchronized Message poll() {
         return queue.poll();
     }
 
-    public synchronized static boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         return queue.isEmpty();
     }
 }

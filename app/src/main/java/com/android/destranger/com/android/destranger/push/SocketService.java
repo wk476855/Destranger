@@ -15,6 +15,8 @@ import java.net.Socket;
 
 public class SocketService extends Service {
 
+    private ClientSocket clientSocket;
+
     public SocketService() {
     }
 
@@ -26,43 +28,13 @@ public class SocketService extends Service {
 
     @Override
     public void onCreate() {
-        super.onCreate();
-        Toast.makeText(this, "oncreate", Toast.LENGTH_SHORT).show();
-        System.out.println("asdf");
-        new Thread() {
-            @Override
-            public void run() {
-                Socket socket = null;
-
-                OutputStream out =null;
-                BufferedOutputStream bos = null;
-                try {
-                    socket = new Socket("192.168.1.160", 12345);
-                    out = socket.getOutputStream();
-                    bos = new BufferedOutputStream(out);
-                    JSONObject json = new JSONObject();
-                    try {
-                        json.put("msg", "sdfs");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    bos.write(json.toString().getBytes());
-                    bos.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }finally {
-                    try {
-                        if(out != null)
-                            out.close();
-                        if(bos != null)
-                            bos.close();
-                        if(bos != null)
-                            socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
+       super.onCreate();
+        try {
+            clientSocket = ClientSocket.getInstance("192.168.1.160", 12345);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        AsynSendTask asynSendTask = new AsynSendTask(this);
+        asynSendTask.execute(clientSocket);
     }
 }
