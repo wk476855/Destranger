@@ -1,0 +1,7 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.android.destranger.start.register">
+    <item android:id="@+id/finish" android:title="@string/finish"
+        app:showAsAction="always" android:textSize="30sp"/>
+</menu>
