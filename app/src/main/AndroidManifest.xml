@@ -38,10 +38,12 @@
         </activity>
 
         <service
-            android:name=".SocketService"
+            android:name=".com.android.destranger.push.SocketService"
             android:enabled="true"
             android:exported="true" >
         </service>
+        <meta-data android:name="server" android:value="192.168.1.160"/>
+        <meta-data android:name="port" android:value="12345" />
     </application>
 
 </manifest>
