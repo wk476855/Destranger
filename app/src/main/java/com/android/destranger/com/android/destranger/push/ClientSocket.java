@@ -8,7 +8,9 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 
 /**
  * Created by wk on 2015/5/10.
@@ -26,9 +28,12 @@ public class ClientSocket {
     private ClientSocket() {
     }
 
-    private ClientSocket(String IP, int port) throws IOException {
-        socket = new Socket(IP, port);
+    private ClientSocket(String host, int port) throws IOException {
+//        socket = new Socket(host, port);
+        InetSocketAddress address = new InetSocketAddress(host, port);
+        socket = new Socket();
         if (socket != null) {
+            socket.connect(address, 5000);
             in = socket.getInputStream();
             bis = new BufferedInputStream(in);
             out = socket.getOutputStream();
@@ -37,9 +42,9 @@ public class ClientSocket {
     }
 
 
-    public synchronized static ClientSocket getInstance(String IP, int port) throws IOException {
+    public synchronized static ClientSocket getInstance(String host, int port) throws IOException {
         if (clientSocket == null)
-            clientSocket = new ClientSocket(IP, port);
+            clientSocket = new ClientSocket(host, port);
         return clientSocket;
     }
 

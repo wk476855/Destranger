@@ -1,5 +1,6 @@
 package com.android.destranger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -25,9 +26,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(this, SocketService.class);
+        Intent intent = new Intent(getApplicationContext(), SocketService.class);
         startService(intent);
-
     }
 
 

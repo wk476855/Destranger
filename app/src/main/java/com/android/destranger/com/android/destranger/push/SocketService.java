@@ -1,8 +1,12 @@
 package com.android.destranger.com.android.destranger.push;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
 import android.os.IBinder;
+import android.os.Looper;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -15,7 +19,8 @@ import java.net.Socket;
 
 public class SocketService extends Service {
 
-    private ClientSocket clientSocket;
+    String host = null;
+    String port = null;
 
     public SocketService() {
     }
@@ -28,13 +33,27 @@ public class SocketService extends Service {
 
     @Override
     public void onCreate() {
-       super.onCreate();
+        super.onCreate();
+        //get server host and port
+        ComponentName service = new ComponentName(this, SocketService.class);
         try {
-            clientSocket = ClientSocket.getInstance("192.168.1.160", 12345);
-        } catch (IOException e) {
+            ServiceInfo info = getPackageManager().getServiceInfo(service, PackageManager.GET_META_DATA);
+            host = info.metaData.getString("server");
+            port = String.valueOf(info.metaData.getInt("port"));
+        } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        AsynSendTask asynSendTask = new AsynSendTask(this);
-        asynSendTask.execute(clientSocket);
+        //connect server
+        AsynConnectTask asynConnectTask = new AsynConnectTask(SocketService.this);
+        asynConnectTask.execute(host, port);
+
+
+
+//        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+       return  super.onStartCommand(intent, flags, startId);
     }
 }
