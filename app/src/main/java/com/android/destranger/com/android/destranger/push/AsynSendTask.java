@@ -30,7 +30,7 @@ public class AsynSendTask extends AsyncTask<ClientSocket, String, Void>{
                     try {
                         client.send(msg);
                     } catch (IOException e) {
-                        onProgressUpdate(e.getMessage());
+                        publishProgress(e.getMessage());
                     }
                 }
             }

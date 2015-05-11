@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by wk on 2015/5/11.
  */
-public class AsynConnectTask extends AsyncTask<String, String, ClientSocket>{
+public class AsynConnectTask extends AsyncTask<String, String, ClientSocket> {
 
     Context context;
     ClientSocket clientSocket = null;
@@ -28,14 +28,14 @@ public class AsynConnectTask extends AsyncTask<String, String, ClientSocket>{
 
     @Override
     protected ClientSocket doInBackground(String... params) {
-        if(params.length <= 1) {
+        if (params.length <= 1) {
             onProgressUpdate("AsyConnectTask paramters error");
             return null;
         }
         Looper.prepare();
         String host = params[0];
         int port = Integer.parseInt(params[1]);
-        while(clientSocket == null) {
+        while (clientSocket == null) {
             try {
                 clientSocket = ClientSocket.getInstance(host, port);
             } catch (IOException e) {
@@ -54,6 +54,7 @@ public class AsynConnectTask extends AsyncTask<String, String, ClientSocket>{
         asynSendTask.execute(clientSocket);
 
         //start receive task
-
+        AsynReceiveTask asynReceiveTask = new AsynReceiveTask(context);
+        asynReceiveTask.execute(clientSocket);
     }
 }

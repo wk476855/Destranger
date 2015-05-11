@@ -41,10 +41,22 @@
             android:name=".com.android.destranger.push.SocketService"
             android:enabled="true"
             android:exported="true" >
-            <meta-data android:name="server" android:value="192.168.1.160"/>
-            <meta-data android:name="port" android:value="12345" />
+            <meta-data
+                android:name="server"
+                android:value="192.168.1.160" />
+            <meta-data
+                android:name="port"
+                android:value="12345" />
         </service>
 
+        <activity
+            android:name=".ChatActivity"
+            android:label="@string/title_activity_chat"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.android.destranger.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
