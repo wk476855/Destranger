@@ -2,28 +2,24 @@ package com.android.destranger;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.android.destranger.com.android.destranger.push.Message;
 
-import org.w3c.dom.Text;
-
-import java.security.spec.PSSParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +37,13 @@ public class ChatActivity extends ActionBarActivity {
                                     R.layout.listitem_voice_right, R.layout.listitem_image_left, R.layout.listitem_image_right};
 
     ListView listView;
-    ImageButton btn1, btn2;
+    ImageButton btn1, btn2, btn3;
     EditText editText;
     List<Message> data;
     MyAdapter myAdapter;
     SharedPreferences usp;
     String username;
+    String friendname = "A";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +57,12 @@ public class ChatActivity extends ActionBarActivity {
         listView = (ListView) findViewById(R.id.listView);
         btn1 = (ImageButton) findViewById(R.id.ibtn1);
         btn2 = (ImageButton) findViewById(R.id.ibtn2);
+        btn3 = (ImageButton) findViewById(R.id.ibtn3);
         editText = (EditText) findViewById(R.id.editText);
 
+        btn1.setOnClickListener(new MyOnClickListener());
+        btn2.setOnClickListener(new MyOnClickListener());
+        btn3.setOnClickListener(new MyOnClickListener());
         editText.addTextChangedListener(new MyTextChangedListener());
 
         //get Data
@@ -72,8 +73,27 @@ public class ChatActivity extends ActionBarActivity {
         myAdapter = new MyAdapter(inflater);
         listView.setAdapter(myAdapter);
 
+    }
 
+    class MyOnClickListener implements View.OnClickListener {
 
+        @Override
+        public void onClick(View v) {
+            if(btn1 == v) {}
+            if(btn2 == v) {}
+            if(btn3== v) {
+                if(editText.getText() == null || editText.getText().toString() == null ||  editText.getText().toString().length() == 0)
+                    return;
+                Message msg = new Message();
+                msg.setTime(System.currentTimeMillis());
+                msg.setType(0);
+                msg.setFrom(username);
+                msg.setTo(friendname);
+                msg.setContent(editText.getText().toString().getBytes());
+                data.add(msg);
+                myAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     class MyAdapter extends BaseAdapter {
@@ -115,6 +135,7 @@ public class ChatActivity extends ActionBarActivity {
                 case 2:
                     if (left)   return VIEW_IMAGE_LEFT;
                     else        return VIEW_IMAGE_RIGHT;
+                default: return 0;
             }
         }
 
@@ -126,36 +147,38 @@ public class ChatActivity extends ActionBarActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Message msg = data.get(position);
+            byte[] content = data.get(position).getContent();
             int type = getItemViewType(position);
             if(convertView == null)
                 convertView = inflater.inflate(layouts[type], parent, false);
+            ImageButton ibtn = (ImageButton) convertView.findViewById(R.id.ibtn);
+            TextView textView;
+
             switch (type) {
                 case VIEW_TEXT_LEFT:
-
-                    TextView textView = (TextView) findViewById(R.id.txt);
+                case VIEW_TEXT_RIGHT:
+                    textView = (TextView) convertView.findViewById(R.id.txt);
                     textView.setText(new String(msg.getContent()));
                     break;
-                case VIEW_TEXT_RIGHT:
                 case VIEW_VOICE_LEFT:
                 case VIEW_VOICE_RIGHT:
+                    ImageButton ibtn2 = (ImageButton) convertView.findViewById(R.id.ibtn2);
+                    ibtn2.setOnClickListener(null);
+                    textView = (TextView) convertView.findViewById(R.id.txt);
+                    textView.setText("5");
+                    break;
                 case VIEW_IMAGE_LEFT:
                 case VIEW_IMAGE_RIGHT:
+                    ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
+                    imageView.setImageBitmap(BitmapFactory.decodeByteArray(content, 0, content.length));
+                    break;
+                default:;
             }
-            if(convertView == null) {
-                convertView = inflater.inflate(R.layout.listitem_chat_right, parent, false);
-                holder = new Holder();
-                holder.ibtn = (ImageButton) convertView.findViewById(R.id.ibtn);
-                holder.txt = (TextView) convertView.findViewById(R.id.txt);
-                holder.txt2 = (TextView)convertView.findViewById(R.id.txt2);
-                convertView.setTag(holder);
-            }else {
-                holder = (Holder) convertView.getTag();
-            }
-            holder.txt = data.get(position).ge
             return convertView;
         }
 
     }
+
 
     class MyTextChangedListener implements TextWatcher {
 
@@ -166,19 +189,26 @@ public class ChatActivity extends ActionBarActivity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if(s.length() > 0)
-                changeBtn2();
+            if(s.length() > 0 && btn2.getVisibility() == View.VISIBLE) {
+                btn2.animate().alpha(0f).setDuration(1000);
+                btn2.setVisibility(View.GONE);
+                btn3.setVisibility(View.VISIBLE);
+                btn3.setAlpha(0f);
+                btn3.animate().alpha(1.0f).setDuration(1000);
+            }
+            if(s.length() == 0) {
+                btn3.animate().alpha(0f).setDuration(1000);
+                btn3.setVisibility(View.GONE);
+                btn2.setVisibility(View.VISIBLE);
+                btn2.setAlpha(0f);
+                btn2.animate().alpha(1.0f).setDuration(1000);
+            }
         }
 
         @Override
         public void afterTextChanged(Editable s) {
 
         }
-    }
-
-
-    private void changeBtn2() {
-
     }
 
     @Override

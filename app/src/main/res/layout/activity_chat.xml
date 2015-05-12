@@ -7,6 +7,10 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:divider="@android:color/transparent"
+        android:animateLayoutChanges="true"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
         android:id="@+id/listView"
         android:layout_gravity="center_horizontal" />
 
@@ -39,10 +43,26 @@
             android:id="@+id/editText"
             android:layout_weight="1" />
 
-        <ImageButton
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/ibtn2"
-            android:background="@drawable/ic_action_add"/>
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ibtn2"
+                android:src="@drawable/ic_action_add"
+                android:background="@android:color/transparent"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ibtn3"
+                android:src="@drawable/ic_action_send"
+                android:visibility="gone"
+                android:background="@android:color/transparent"/>
+
+        </RelativeLayout>
+
     </LinearLayout>
 </RelativeLayout>
