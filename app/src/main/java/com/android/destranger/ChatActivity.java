@@ -18,9 +18,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.android.destranger.com.android.destranger.push.ConcurrentQueue;
 import com.android.destranger.com.android.destranger.push.Message;
+import com.android.destranger.com.android.destranger.push.Protocol;
+import com.android.destranger.com.android.destranger.push.ProtocolPair;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -85,11 +91,16 @@ public class ChatActivity extends ActionBarActivity {
                 if(editText.getText() == null || editText.getText().toString() == null ||  editText.getText().toString().length() == 0)
                     return;
                 Message msg = new Message();
-                msg.setTime(System.currentTimeMillis());
+                msg.setTime(new Date());
                 msg.setType(0);
                 msg.setFrom(username);
                 msg.setTo(friendname);
                 msg.setContent(editText.getText().toString().getBytes());
+                try {
+                    ConcurrentQueue.Wait_Queue.put(new ProtocolPair(Protocol.MESSAGE_SEND, new Gson().toJson(msg)));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 data.add(msg);
                 myAdapter.notifyDataSetChanged();
             }

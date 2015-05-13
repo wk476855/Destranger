@@ -34,9 +34,12 @@ public class SocketService extends Service {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        //get session
+        String session = "123132331";
+        //TODO
         //connect server
         AsynConnectTask asynConnectTask = new AsynConnectTask(SocketService.this);
-        asynConnectTask.execute(host, port);
+        asynConnectTask.execute(host, port, session);
 
 
 

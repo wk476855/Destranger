@@ -5,6 +5,9 @@ import android.os.AsyncTask;
 import android.os.Looper;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 /**
@@ -28,13 +31,14 @@ public class AsynConnectTask extends AsyncTask<String, String, ClientSocket> {
 
     @Override
     protected ClientSocket doInBackground(String... params) {
-        if (params.length <= 1) {
-            onProgressUpdate("AsyConnectTask paramters error");
+        Looper.prepare();
+        if (params.length <= 2) {
+            publishProgress("AsyConnectTask paramters error");
             return null;
         }
-        Looper.prepare();
         String host = params[0];
         int port = Integer.parseInt(params[1]);
+        String session = params[2];
         while (clientSocket == null) {
             try {
                 clientSocket = ClientSocket.getInstance(host, port);
@@ -42,6 +46,19 @@ public class AsynConnectTask extends AsyncTask<String, String, ClientSocket> {
 //                e.printStackTrace();
                 publishProgress(e.getMessage());
             }
+        }
+
+        //session confirm
+        try {
+            JSONObject json = new JSONObject();
+            json.put("session", session);
+            ConcurrentQueue.Wait_Queue.put(new ProtocolPair(Protocol.SESSION_COMFIRM, json.toString()));
+        } catch (InterruptedException e) {
+//            e.printStackTrace();
+            publishProgress(e.getMessage());
+        } catch (JSONException e) {
+//            e.printStackTrace();
+            publishProgress(e.getMessage());
         }
         return clientSocket;
     }

@@ -18,8 +18,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Intent intent = new Intent(getApplicationContext(), SocketService.class);
-//        startService(intent);
+        Intent intent = new Intent(getApplicationContext(), SocketService.class);
+        startService(intent);
     }
 
 

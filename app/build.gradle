@@ -29,4 +29,5 @@ dependencies {
     compile files('D:/AndroidLocal/Destranger/.idea/libraries/wup-1.0.0-SNAPSHOT.jar')
     compile files('D:/AndroidLocal/Destranger/.idea/libraries/jg_filter_sdk_1.1.jar')
     compile files('D:/AndroidLocal/Destranger/.idea/libraries/Xg_sdk_v2.38_20150405_2046.jar')
+    compile files('D:/AndroidLocal/Destranger/.idea/libraries/gson-2.3.1.jar')
 }

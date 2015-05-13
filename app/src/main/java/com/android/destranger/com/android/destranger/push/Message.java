@@ -1,17 +1,19 @@
 package com.android.destranger.com.android.destranger.push;
 
+import org.json.JSONObject;
+
 import java.util.Comparator;
 import java.util.Date;
 
 /**
  * Created by wk on 2015/5/10.
  */
-public class Message implements Comparator<Message>{
+public class Message{
 
     private byte[] content;
     private String from;
     private String to;
-    private long time;
+    private Date time;
     private int type;
 
     public String getFrom() {
@@ -30,14 +32,6 @@ public class Message implements Comparator<Message>{
         this.to = to;
     }
 
-    public long getTime() {
-        return time;
-    }
-
-    public void setTime(long time) {
-        this.time = time;
-    }
-
     public int getType() {
         return type;
     }
@@ -54,15 +48,11 @@ public class Message implements Comparator<Message>{
         this.content = content;
     }
 
-    @Override
-    public int compare(Message lhs, Message rhs) {
-        if(lhs.getTime() > rhs.getTime())
-            return 1;
-        if(lhs.getTime() == rhs.getTime())
-            return 0;
-        if(lhs.getTime() < rhs.getTime())
-            return -1;
-        return 0;
+    public Date getTime() {
+        return time;
     }
 
+    public void setTime(Date time) {
+        this.time = time;
+    }
 }

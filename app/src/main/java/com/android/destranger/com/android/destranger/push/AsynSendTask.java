@@ -23,16 +23,17 @@ public class AsynSendTask extends AsyncTask<ClientSocket, String, Void>{
         ClientSocket client = params[0];
         while (true) {
             if(client == null)  continue;
-            if(!MessageQueue.Wait_Queue.isEmpty()) {
-                Message msg = MessageQueue.Wait_Queue.poll();
-                if(msg != null) {
-                    MessageQueue.Send_Queue.push(msg);
-                    try {
-                        client.send(msg);
-                    } catch (IOException e) {
-                        publishProgress(e.getMessage());
-                    }
+            try {
+                if (!ConcurrentQueue.Wait_Queue.isEmpty()) {
+                    ProtocolPair pair = ConcurrentQueue.Wait_Queue.take();
+                    client.send(pair);
                 }
+            }catch (InterruptedException e) {
+//                e.printStackTrace();
+                publishProgress(e.getMessage());
+            } catch (IOException e) {
+//                e.printStackTrace();
+                publishProgress(e.getMessage());
             }
         }
     }
