@@ -1,17 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.destranger" >
-    <uses-feature android:name="android.hardware.camera"
+
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
+
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="fmb0aMXSer3LZAiQ9GbP101a" />
         <activity
-            android:theme="@style/startTheme"
             android:name=".start.main"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/startTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,6 +46,16 @@
             android:name=".start.login"
             android:label="@string/login" >
         </activity>
+        <activity
+            android:name=".start.home"
+            android:label="@string/title_activity_home" >
+        </activity>
     </application>
 
+    <!-- 百度定位服务    android:permission="android.permission.BAIDU_LOCATION_SERVICE"> -->
+    <service
+        android:name="com.baidu.location.f"
+        android:enabled="true"
+        android:process=":remote" >
+    </service>
 </manifest>
