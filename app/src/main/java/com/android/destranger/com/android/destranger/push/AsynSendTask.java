@@ -2,6 +2,7 @@ package com.android.destranger.com.android.destranger.push;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class AsynSendTask extends AsyncTask<ClientSocket, String, Void>{
 
     @Override
     protected Void doInBackground(ClientSocket... params) {
+        Looper.prepare();
         ClientSocket client = params[0];
         while (true) {
             if(client == null)  continue;

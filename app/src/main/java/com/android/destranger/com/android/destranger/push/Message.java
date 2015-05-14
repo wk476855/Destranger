@@ -2,13 +2,14 @@ package com.android.destranger.com.android.destranger.push;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 
 /**
  * Created by wk on 2015/5/10.
  */
-public class Message{
+public class Message implements Serializable{
 
     private byte[] content;
     private String from;

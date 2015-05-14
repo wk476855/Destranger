@@ -12,7 +12,8 @@
         android:paddingRight="10dp"
         android:paddingLeft="10dp"
         android:id="@+id/listView"
-        android:layout_gravity="center_horizontal" />
+        android:transcriptMode="alwaysScroll"
+        android:layout_above="@+id/linearLayout" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,7 +27,8 @@
         android:background="@android:color/white"
         android:layout_alignParentBottom="true"
         android:focusable="true"
-        android:focusableInTouchMode="true">
+        android:focusableInTouchMode="true"
+        android:id="@+id/linearLayout">
 
 
         <ImageButton

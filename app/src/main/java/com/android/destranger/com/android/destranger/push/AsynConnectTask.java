@@ -9,6 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by wk on 2015/5/11.
@@ -48,30 +50,24 @@ public class AsynConnectTask extends AsyncTask<String, String, ClientSocket> {
             }
         }
 
-        //session confirm
-        try {
-            JSONObject json = new JSONObject();
-            json.put("session", session);
-            ConcurrentQueue.Wait_Queue.put(new ProtocolPair(Protocol.SESSION_COMFIRM, json.toString()));
-        } catch (InterruptedException e) {
-//            e.printStackTrace();
-            publishProgress(e.getMessage());
-        } catch (JSONException e) {
-//            e.printStackTrace();
-            publishProgress(e.getMessage());
-        }
         return clientSocket;
     }
 
     @Override
     protected void onPostExecute(ClientSocket clientSocket) {
         super.onPostExecute(clientSocket);
+
+
         //start send task
         AsynSendTask asynSendTask = new AsynSendTask(context);
-        asynSendTask.execute(clientSocket);
+        asynSendTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, clientSocket);
 
         //start receive task
         AsynReceiveTask asynReceiveTask = new AsynReceiveTask(context);
-        asynReceiveTask.execute(clientSocket);
+        asynReceiveTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, clientSocket);
+
+        //start handle task
+        AsynHandleTask asynHandleTask = new AsynHandleTask(context);
+        asynHandleTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ConcurrentQueue.Receive_Queue);
     }
 }

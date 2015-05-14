@@ -1,6 +1,9 @@
 package com.android.destranger;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
@@ -20,10 +23,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.destranger.com.android.destranger.push.ConcurrentQueue;
+import com.android.destranger.com.android.destranger.push.CurrentChatUser;
 import com.android.destranger.com.android.destranger.push.Message;
 import com.android.destranger.com.android.destranger.push.Protocol;
 import com.android.destranger.com.android.destranger.push.ProtocolPair;
 import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +57,8 @@ public class ChatActivity extends ActionBarActivity {
     SharedPreferences usp;
     String username;
     String friendname = "A";
+    IntentFilter intentFilter;
+    MessageReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +88,16 @@ public class ChatActivity extends ActionBarActivity {
         myAdapter = new MyAdapter(inflater);
         listView.setAdapter(myAdapter);
 
+        //TODO
+        username = "A";
+        friendname = "A";
+        CurrentChatUser.username = "A";
+
+
+        //set intent filter
+        intentFilter = new IntentFilter();
+        intentFilter.addAction("com.android.destranger.push");
+        mReceiver = new MessageReceiver();
     }
 
     class MyOnClickListener implements View.OnClickListener {
@@ -96,9 +115,15 @@ public class ChatActivity extends ActionBarActivity {
                 msg.setFrom(username);
                 msg.setTo(friendname);
                 msg.setContent(editText.getText().toString().getBytes());
+                editText.setText("");
                 try {
-                    ConcurrentQueue.Wait_Queue.put(new ProtocolPair(Protocol.MESSAGE_SEND, new Gson().toJson(msg)));
+                    JSONObject json = new JSONObject();
+                    json.put("session", "123");
+                    json.put("message", new Gson().toJson(msg));
+                    ConcurrentQueue.Wait_Queue.put(new ProtocolPair(Protocol.MESSAGE_SEND, json.toString()));
                 } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 data.add(msg);
@@ -135,17 +160,17 @@ public class ChatActivity extends ActionBarActivity {
             Message msg = data.get(position);
             String to = msg.getTo();
             String from = msg.getFrom();
-            boolean left = to.equals(username);
+            boolean right = from.equals(username);
             switch (msg.getType()) {
                 case 0:
-                    if (left)   return VIEW_TEXT_LEFT;
-                    else        return VIEW_TEXT_RIGHT;
+                    if (right)   return VIEW_TEXT_RIGHT;
+                    else        return VIEW_TEXT_LEFT;
                 case 1:
-                    if (left)   return VIEW_VOICE_LEFT;
-                    else        return VIEW_VOICE_RIGHT;
+                    if (right)   return VIEW_VOICE_RIGHT;
+                    else        return VIEW_VOICE_LEFT;
                 case 2:
-                    if (left)   return VIEW_IMAGE_LEFT;
-                    else        return VIEW_IMAGE_RIGHT;
+                    if (right)   return VIEW_IMAGE_RIGHT;
+                    else        return VIEW_IMAGE_LEFT;
                 default: return 0;
             }
         }
@@ -201,18 +226,18 @@ public class ChatActivity extends ActionBarActivity {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if(s.length() > 0 && btn2.getVisibility() == View.VISIBLE) {
-                btn2.animate().alpha(0f).setDuration(1000);
+                btn2.animate().alpha(0f).setDuration(500);
                 btn2.setVisibility(View.GONE);
                 btn3.setVisibility(View.VISIBLE);
                 btn3.setAlpha(0f);
-                btn3.animate().alpha(1.0f).setDuration(1000);
+                btn3.animate().alpha(1.0f).setDuration(500);
             }
             if(s.length() == 0) {
-                btn3.animate().alpha(0f).setDuration(1000);
+                btn3.animate().alpha(0f).setDuration(500);
                 btn3.setVisibility(View.GONE);
                 btn2.setVisibility(View.VISIBLE);
                 btn2.setAlpha(0f);
-                btn2.animate().alpha(1.0f).setDuration(1000);
+                btn2.animate().alpha(1.0f).setDuration(500);
             }
         }
 
@@ -220,6 +245,30 @@ public class ChatActivity extends ActionBarActivity {
         public void afterTextChanged(Editable s) {
 
         }
+    }
+
+    class MessageReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals("com.android.destranger.push")) {
+                Message msg = (Message) intent.getSerializableExtra("message");
+                data.add(msg);
+                myAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -243,4 +292,6 @@ public class ChatActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

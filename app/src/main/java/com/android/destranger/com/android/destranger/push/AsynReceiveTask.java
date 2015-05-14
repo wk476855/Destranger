@@ -2,7 +2,10 @@ package com.android.destranger.com.android.destranger.push;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.io.IOException;
 
@@ -30,12 +33,14 @@ public class AsynReceiveTask extends AsyncTask<ClientSocket, String, Void>{
 
     @Override
     protected Void doInBackground(ClientSocket... params) {
+        Looper.prepare();
         ClientSocket clientSocket = params[0];
         if(clientSocket != null) {
             try {
                 while (true) {
                     ProtocolPair pair = clientSocket.receive();
                     ConcurrentQueue.Receive_Queue.put(pair);
+                    System.out.println("receive: protocol: " + pair.protocol + " content: " + pair.content);
                 }
             } catch (IOException e) {
 //                e.printStackTrace();

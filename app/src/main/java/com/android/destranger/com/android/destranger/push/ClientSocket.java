@@ -60,7 +60,7 @@ public class ClientSocket {
 
     public void send(ProtocolPair pair) throws IOException {
         byte[] content = pair.content.getBytes();
-        byte[] data = generateHeader(content.length, pair.protocol);          //加包头
+        byte[] data = generateHeader(content.length, pair.protocol);   
         System.arraycopy(content, 0, data, 6, content.length);
 
         if (socket != null && bos != null) {
@@ -69,10 +69,6 @@ public class ClientSocket {
         }
     }
 
-
-    /*
-    @method 返回json字符串
- */
     public ProtocolPair receive() throws IOException {
         ProtocolPair pair = null;
         byte[] header = new byte[8];
@@ -105,7 +101,6 @@ public class ClientSocket {
                 cnt += len;
                 if (cnt == 2) {
                     protocol = DataToolkit.byteArrayToInt(headerCopy, 2);
-//                    System.out.println("cmd   " + cmd);
                     break;
                 }
             }
