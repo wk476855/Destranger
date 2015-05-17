@@ -11,7 +11,7 @@ public class UserInfo implements Serializable{
     private String password;
     private int gender;
     private String head;
-    private String session;
+    private String cookie;
     private UserLoc userLoc;
 
 
@@ -55,12 +55,12 @@ public class UserInfo implements Serializable{
         this.head = head;
     }
 
-    public String getSession() {
-        return session;
+    public String getCookie() {
+        return cookie;
     }
 
-    public void setSession(String session) {
-        this.session = session;
+    public void setCookie(String cookie) {
+        this.cookie = cookie;
     }
 
     public UserLoc getUserLoc() {

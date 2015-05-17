@@ -3,11 +3,14 @@ package com.android.destranger.start;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -20,17 +23,19 @@ import com.android.destranger.R;
 import com.android.destranger.network.Communication;
 import com.android.destranger.network.MessageHandler;
 import com.android.destranger.ui.IRegister;
+import com.android.destranger.view.MyEditText;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
 
-public class register extends ActionBarActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener, IRegister{
+public class register extends ActionBarActivity implements View.OnClickListener, IRegister{
 
     private static final int CAMERA_REQUSET = 0X001;
     private ImageView head = null;
-    private EditText userName = null;
-    private EditText passWord = null;
-    private RadioGroup gender = null;
+    private MyEditText myusername = null;
+    private MyEditText mypassword = null;
+    private MyEditText sex = null;
+    private Button register = null;
     private UserInfo userInfo = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +45,19 @@ public class register extends ActionBarActivity implements View.OnClickListener,
         userInfo = new UserInfo();
         head = (ImageView) this.findViewById(R.id.head);
         head.setOnClickListener(this);
-        userName = (EditText) this.findViewById(R.id.username);
-        passWord = (EditText) this.findViewById(R.id.password);
-        gender = (RadioGroup) this.findViewById(R.id.gender);
-        gender.setOnCheckedChangeListener(this);
+        myusername = (MyEditText)this.findViewById(R.id.username);
+        myusername.setHint("用户名");
+        mypassword = (MyEditText) this.findViewById(R.id.password);
+        mypassword.setHint("密   码");
+        sex = (MyEditText) this.findViewById(R.id.sex);
+        sex.setHint("性   别");
+        sex.setOnClickListener(this);
+        this.registerForContextMenu(sex);
+        register = (Button) this.findViewById(R.id.register);
+        register.setOnClickListener(this);
+        ActionBar actionBar = this.getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
     }
 
     @Override
@@ -63,21 +77,17 @@ public class register extends ActionBarActivity implements View.OnClickListener,
         //noinspection SimplifiableIfStatement
         if(id == R.id.finish)
         {
-            userInfo.setUsername(userName.getText().toString());
-            userInfo.setPassword(passWord.getText().toString());
+            userInfo.setUsername(myusername.getText().toString());
+            userInfo.setPassword(mypassword.getText().toString());
             Communication com = new Communication(this,new MessageHandler(this));
             com.setCode(0x001);
             com.setUrl(Protocol.REGISTER_URL);
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("username", userInfo.getUsername());
-                jsonObject.put("password", userInfo.getPassword());
-                jsonObject.put("head", userInfo.getHead());
-                jsonObject.put("gender", userInfo.getGender());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            com.setParams(jsonObject);
+            Map<String,String> params = new HashMap<>();
+            params.put("username",userInfo.getUsername());
+            params.put("password",userInfo.getPassword());
+            params.put("head",userInfo.getHead());
+            params.put("gender",String.valueOf(userInfo.getGender()));
+            com.setParams(params);
             com.sendPostRequest();
         }
         if (id == R.id.action_settings) {
@@ -85,6 +95,35 @@ public class register extends ActionBarActivity implements View.OnClickListener,
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.setHeaderTitle("请选择您的性别");
+        menu.add(0, 0, 1, "男");
+        menu.add(0, 1, 2, "女");
+        menu.add(0,2,3,"性别不明");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id)
+        {
+            case 0:
+                sex.setText("男");
+                userInfo.setGender(0);
+                break;
+            case 1:
+                sex.setText("女");
+                userInfo.setGender(1);
+                break;
+            case 2:
+                sex.setText("性别不详");
+                userInfo.setGender(2);
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -110,16 +149,25 @@ public class register extends ActionBarActivity implements View.OnClickListener,
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent,CAMERA_REQUSET);
         }
-    }
-
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-        if(checkedId == R.id.boy)
+        if(id == R.id.sex)
         {
-            userInfo.setGender(0);
+            v.showContextMenu();
         }
-        else
-            userInfo.setGender(1);
+        if(id == R.id.register)
+        {
+            userInfo.setUsername(myusername.getText().toString());
+            userInfo.setPassword(mypassword.getText().toString());
+            Communication com = new Communication(this,new MessageHandler(this));
+            com.setCode(0x001);
+            com.setUrl(Protocol.REGISTER_URL);
+            Map<String,String> params = new HashMap<>();
+            params.put("username",userInfo.getUsername());
+            params.put("password",userInfo.getPassword());
+            params.put("head",userInfo.getHead());
+            params.put("gender",String.valueOf(userInfo.getGender()));
+            com.setParams(params);
+            com.sendPostRequest();
+        }
     }
 
     @Override

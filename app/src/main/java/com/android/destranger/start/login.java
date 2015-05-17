@@ -5,6 +5,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -14,20 +16,26 @@ import com.android.destranger.data.UserInfo;
 import com.android.destranger.network.Communication;
 import com.android.destranger.network.MessageHandler;
 import com.android.destranger.ui.ILogin;
+import com.android.destranger.view.MyEditText;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
 
-public class login extends ActionBarActivity implements ILogin{
+public class login extends ActionBarActivity implements ILogin,View.OnClickListener{
 
-    private EditText userName = null;
-    private EditText passWord = null;
+    private MyEditText userName = null;
+    private MyEditText passWord = null;
+    private Button login = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        userName = (EditText) this.findViewById(R.id.username);
-        passWord = (EditText) this.findViewById(R.id.password);
+        userName = (MyEditText) this.findViewById(R.id.username);
+        userName.setHint("用户名");
+        passWord = (MyEditText) this.findViewById(R.id.password);
+        passWord.setHint("密   码");
+        login = (Button) this.findViewById(R.id.login);
+        login.setOnClickListener(this);
     }
 
     @Override
@@ -48,23 +56,6 @@ public class login extends ActionBarActivity implements ILogin{
         if (id == R.id.action_settings) {
             return true;
         }
-        if(id == R.id.finish)
-        {
-            String un = userName.getText().toString();
-            String pw = passWord.getText().toString();
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("username",un);
-                jsonObject.put("password",pw);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Communication com = new Communication(this,new MessageHandler(this));
-            com.setUrl(Protocol.LOGIN_URL);
-            com.setParams(jsonObject);
-            com.setCode(0x002);
-            com.sendGetRequest();
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -81,5 +72,19 @@ public class login extends ActionBarActivity implements ILogin{
         Intent intent = new Intent(this,home.class);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View v) {
+        String un = userName.getText().toString();
+        String pw = passWord.getText().toString();
+        Map<String,String> params = new HashMap<>();
+        params.put("username",un);
+        params.put("password",pw);
+        Communication com = new Communication(this,new MessageHandler(this));
+        com.setUrl(Protocol.LOGIN_URL);
+        com.setParams(params);
+        com.setCode(0x002);
+        com.sendPostRequest();
     }
 }

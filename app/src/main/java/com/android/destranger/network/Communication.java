@@ -12,6 +12,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.util.Map;
+
 
 /**
  * Created by ximing on 2015/5/10.
@@ -21,9 +23,10 @@ public class Communication {
     private MessageHandler handler;
     private int code;
     private String url;
-    private JSONObject params;
+    private String cookie;
+    private Map<String,String> params;
 
-    public Communication(Context context,MessageHandler handler)
+    public Communication(Context context, MessageHandler handler)
     {
         this.context = context;
         this.handler = handler;
@@ -37,36 +40,18 @@ public class Communication {
         this.url = url;
     }
 
-    public void setParams(JSONObject params) {
+    public void setParams(Map<String,String> params) {
         this.params = params;
     }
 
-    public void sendGetRequest()
+    public void setCookie(String cookie)
     {
-        String trueUrl = getTrueUrl();
-        System.out.println(trueUrl);
-        JsonObjectRequest JORequest = new JsonObjectRequest(Request.Method.GET, trueUrl, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-                Message msg = new Message();
-                msg.what = code;
-                Bundle data = new Bundle();
-                data.putString("result",jsonObject.toString());
-                msg.setData(data);
-                handler.sendMessage(msg);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.e("volley",volleyError.toString());
-            }
-        });
-        NetworkSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(JORequest);
+        this.cookie = cookie;
     }
 
     public void sendPostRequest()
     {
-        JsonObjectRequest JORequest = new JsonObjectRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
+        JsonObjectPostRequest JORequest = new JsonObjectPostRequest(url, params, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonObject) {
                 Message msg = new Message();
@@ -82,18 +67,9 @@ public class Communication {
                 Log.e("volley",volleyError.toString());
             }
         });
+        if(cookie != null)
+            JORequest.setSendCookie(cookie);
         NetworkSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(JORequest);
     }
-
-    private String getTrueUrl()
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.url);
-        sb.append("?");
-        sb.append("request=");
-        sb.append(this.params.toString());
-        return sb.toString();
-    }
-
 
 }

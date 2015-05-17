@@ -9,19 +9,21 @@
 
     <LinearLayout
         android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <Button
-            android:text="@string/register"
-            android:id="@+id/register"
-            android:textSize="25sp"
+            android:id="@+id/login"
+            android:text="@string/login"
+            android:textSize="20sp"
+            android:background="@drawable/regbutton_selector"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
         <Button
-            android:id="@+id/login"
-            android:text="@string/login"
-            android:textSize="25sp"
+            android:text="@string/register"
+            android:id="@+id/register"
+            android:textSize="20sp"
+            android:background="@drawable/regbutton_selector"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>

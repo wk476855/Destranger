@@ -45,6 +45,7 @@ public class JsonObjectPostRequest extends Request<JSONObject>{
     protected Response<JSONObject> parseNetworkResponse(NetworkResponse networkResponse) {
         try {
             String json = new String(networkResponse.data, HttpHeaderParser.parseCharset(networkResponse.headers));
+            JSONObject jsonObject = new JSONObject(json);
             mHeader = networkResponse.headers.toString();
             Log.e("destrangers", "headers" + mHeader);
             Pattern pattern = Pattern.compile("Set-Cookie.*?;");
@@ -53,12 +54,10 @@ public class JsonObjectPostRequest extends Request<JSONObject>{
             {
                 cookieFromResponse = matcher.group();
                 Log.e("destrangers","cookie from server" + cookieFromResponse);
+                cookieFromResponse = cookieFromResponse.substring(11,cookieFromResponse.length() - 1);
+                Log.e("destrangers", "cookie substring" + cookieFromResponse);
+                jsonObject.put("Cookie", cookieFromResponse);
             }
-            cookieFromResponse = cookieFromResponse.substring(11,cookieFromResponse.length() - 1);
-            Log.e("destrangers", "cookie substring" + cookieFromResponse);
-
-            JSONObject jsonObject = new JSONObject(json);
-            jsonObject.put("Cookie",cookieFromResponse);
             return Response.success(jsonObject,HttpHeaderParser.parseCacheHeaders(networkResponse));
         }catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));

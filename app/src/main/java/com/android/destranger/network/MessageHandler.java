@@ -45,8 +45,23 @@ public class MessageHandler extends Handler {
              * for register
              */
             case 0x001:
+
                 try {
-                    ui.hint(jsonObject.getString("result"));
+                    String str = "";
+                    int result = jsonObject.getInt("result");
+                    switch (result)
+                    {
+                        case 0:
+                            str = "用户名已存在";
+                            break;
+                        case 1:
+                            str = "注册成功";
+                            break;
+                        case 2:
+                            str = "注册失败";
+                            break;
+                    }
+                    ui.hint(str);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -65,7 +80,7 @@ public class MessageHandler extends Handler {
                         userInfo.setPassword(jsonObject.getString("password"));
                         userInfo.setHead(jsonObject.getString("head"));
                         userInfo.setGender(jsonObject.getInt("gender"));
-                        userInfo.setSession(jsonObject.getString("session"));
+                        userInfo.setCookie(jsonObject.getString("Cookie"));
                         ((ILogin) ui).jump(userInfo);
                     }
                     else
@@ -82,6 +97,8 @@ public class MessageHandler extends Handler {
                     int result = jsonObject.getInt("result");
                     if(result == 0)
                         ui.hint("附近没人");
+                    else if(result == 2)
+                        ui.hint("请重新登陆");
                     else
                     {
                         JSONArray jsonArray = jsonObject.getJSONArray("userInfos");

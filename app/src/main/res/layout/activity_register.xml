@@ -6,21 +6,12 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.android.destranger.start.register">
 
-    <ImageView
-        android:id="@+id/head"
-        android:src="@mipmap/head"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"
-        android:layout_width="100dp"
-        android:layout_height="100dp" />
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/un"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/head"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
-        <TextView
+        <!--<TextView
             android:text="用户名:"
             android:textSize="25sp"
             android:layout_below="@+id/head"
@@ -30,15 +21,31 @@
         <EditText
             android:id="@+id/username"
             android:layout_width="150dp"
+            android:layout_height="wrap_content" />-->
+        <com.android.destranger.view.MyEditText
+            android:id="@+id/username"
+            android:hint="例如：张三"
+            android:paddingLeft="100dp"
+            android:layout_toLeftOf="@+id/head"
+            android:layout_alignBottom="@+id/head"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/head"
+            android:src="@mipmap/head"
+            android:scaleType="fitXY"
+            android:layout_alignParentRight="true"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+    </RelativeLayout>
     <LinearLayout
         android:id="@+id/pw"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/un"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
-        <TextView
+        <!--<TextView
             android:text="密    码:"
             android:textSize="25sp"
             android:layout_below="@+id/head"
@@ -49,14 +56,23 @@
             android:id="@+id/password"
             android:layout_width="150dp"
             android:inputType="textPassword"
+            android:layout_height="wrap_content" />-->
+        <com.android.destranger.view.MyEditText
+            android:id="@+id/password"
+            android:hint="设置您的密码"
+            android:paddingLeft="100dp"
+            android:inputType="textPassword"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/s"
         android:layout_below="@+id/pw"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
-        <TextView
+        <!--<TextView
             android:text="性    别:"
             android:textSize="25sp"
             android:layout_width="wrap_content"
@@ -78,8 +94,25 @@
                 android:textSize="25sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-        </RadioGroup>
+        </RadioGroup>-->
+        <com.android.destranger.view.MyEditText
+            android:id="@+id/sex"
+            android:hint="选择您的性别"
+            android:editable="false"
+            android:paddingLeft="100dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
+    <Button
+        android:id="@+id/register"
+        android:layout_below="@+id/s"
+        android:layout_marginTop="10dp"
+        android:text="@string/register"
+        android:textSize="20sp"
+        android:focusable="true"
+        android:background="@drawable/regbutton_selector"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
 
 </RelativeLayout>

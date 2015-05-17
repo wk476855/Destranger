@@ -5,6 +5,7 @@ import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,13 +32,11 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
-import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class home extends ActionBarActivity implements SensorListener ,BDLocationListener, BaiduMap.OnMarkerClickListener,IHome{
 
@@ -47,11 +46,11 @@ public class home extends ActionBarActivity implements SensorListener ,BDLocatio
     private BaiduMap baiduMap = null;
     private LocationClient locationClient;
     private LatLng loc = null;
-    private int mSpeed=3000;
-    private int mInterval=50;
+
+    private int mSpeed=1000;
+    private int mInterval=100;
     private long LastTime;
     private float LastX,LastY,LastZ;
-
     private UserInfo userInfo = null;
 
     @Override
@@ -91,21 +90,16 @@ public class home extends ActionBarActivity implements SensorListener ,BDLocatio
 
     public void updateLoc(LatLng location)
     {
+        Map<String,String> params = new HashMap<>();
+        params.put("uid",String.valueOf(userInfo.getUid()));
+        params.put("latitude",String.valueOf(location.latitude));
+        params.put("longitude", String.valueOf(location.longitude));
         Communication com = new Communication(this,new MessageHandler(this));
         com.setUrl(Protocol.UPDATE_LOC_URL);
         com.setCode(0x003);
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("uid", userInfo.getUid());
-            jsonObject.put("latitude",location.latitude);
-            jsonObject.put("longitude",location.longitude);
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        com.setParams(jsonObject);
-        com.sendGetRequest();
+        com.setParams(params);
+        com.setCookie(userInfo.getCookie());
+        com.sendPostRequest();
     }
 
     @Override
@@ -130,6 +124,12 @@ public class home extends ActionBarActivity implements SensorListener ,BDLocatio
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        sm.unregisterListener(this);
+        super.onDestroy();
+    }
+
     public void shake(View view)
     {
         sm.registerListener(this,SensorManager.SENSOR_ACCELEROMETER);
@@ -146,6 +146,7 @@ public class home extends ActionBarActivity implements SensorListener ,BDLocatio
         if(sensor == SensorManager.SENSOR_ACCELEROMETER)
         {
             long NowTime = System.currentTimeMillis();
+            Log.e("destrangers" ,String.valueOf(NowTime - LastTime));
             if ((NowTime - LastTime) < mInterval)
                 return;
             LastTime = NowTime;
@@ -159,6 +160,7 @@ public class home extends ActionBarActivity implements SensorListener ,BDLocatio
             LastY = NowY;
             LastZ = NowZ;
             double NowSpeed = Math.sqrt(DeltaX * DeltaX + DeltaY * DeltaY + DeltaZ * DeltaZ) / mInterval * 10000;
+            Log.e("destrangers","speed :" + NowSpeed);
             if (NowSpeed >= mSpeed)
             {
                 System.out.println("shake");
@@ -203,7 +205,6 @@ public class home extends ActionBarActivity implements SensorListener ,BDLocatio
     @Override
     public void showStrangers(ArrayList<UserInfo> userInfos)
     {
-        mapView.getOverlay().clear();
         for(UserInfo userInfo : userInfos)
         {
             Bundle data = new Bundle();

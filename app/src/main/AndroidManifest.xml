@@ -40,11 +40,11 @@
         </activity>
         <activity
             android:name=".start.register"
-            android:label="@string/register" >
+            android:label="填写注册信息" >
         </activity>
         <activity
             android:name=".start.login"
-            android:label="@string/login" >
+            android:label="填写用户信息" >
         </activity>
         <activity
             android:name=".start.home"
