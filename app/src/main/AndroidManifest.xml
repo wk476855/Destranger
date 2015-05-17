@@ -20,6 +20,7 @@
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -50,6 +51,28 @@
             android:name=".start.home"
             android:label="@string/title_activity_home" >
         </activity>
+
+        <service
+            android:name=".com.android.destranger.push.SocketService"
+            android:enabled="true"
+            android:exported="true" >
+            <meta-data
+                android:name="server"
+                android:value="192.168.1.160" />
+            <meta-data
+                android:name="port"
+                android:value="12345" />
+        </service>
+
+        <activity
+            android:name=".ChatActivity"
+            android:label="@string/title_activity_chat"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.android.destranger.MainActivity" />
+        </activity>
+
     </application>
 
     <!-- 百度定位服务    android:permission="android.permission.BAIDU_LOCATION_SERVICE"> -->
